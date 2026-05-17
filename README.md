@@ -2,7 +2,7 @@
 
 ## Description
 
-Biscotti is a plugin that modifies the expiration of the logged in user cookie in WordPress to three months, six months, or one year. Because some folks hate to have to keep entering their passwords.
+Biscotti is a plugin that modifies the expiration of the logged in user cookie in WordPress. Choose from the default WordPress expiration (14 days), three months (90 days), six months (180 days), or one year (365 days). Because some folks hate to have to keep entering their passwords.
 
 ## Installation
 
@@ -10,58 +10,95 @@ To install this plugin, drop `biscotti.php` into your site's `wp-content/plugins
 
 ## Usage
 
-Once the plugin has been activated, a new option will be available in the WordPress dashboard under "User -> Profile" called "Login Cookie Expiration". There, you can select the cookie expiration date of 3 months, 6 months, or 1 year on a per-account basis.
+Once the plugin has been activated, a new option will be available in the WordPress dashboard under "User -> Profile" called "Login Cookie Expiration". There, you can select the cookie expiration from the following options on a per-account basis:
+
+- **Default (14 days)** - WordPress's standard expiration
+- **3 months (90 days)** - Extended expiration for frequent users
+- **6 months (180 days)** - Longer expiration for regular users
+- **1 year (365 days)** - Maximum expiration for power users
 
 After updating this setting, you *will* need to log out and back into WordPress for your new cookie expiration value to take effect.
 
 Enjoy your long cookie!
 
-## WP-CLI Command
+## WP-CLI Commands
 
 As of version 2.1.0, Biscotti includes WP-CLI commands for managing a user's logged in session cookie expiration.
 
-### `biscotti get`
+### `wp biscotti get <user_id>`
 
-This command returns the previously defined cookie expiration of a user.
+Retrieves the current cookie expiration setting for a user.
 
-#### Options
+#### Parameters
 
-`<user_id>` — The ID of the user. 
+- `<user_id>` — The ID of the user.
 
 #### Examples
 
-To get the logged in session cookie expiration of a user with the ID of 123, you would use:
+Get the logged in session cookie expiration for user ID 123:
 
 ```bash
 wp biscotti get 123
 ```
 
-### `biscotti set`
+Example output:
+```
+Cookie expiration for johndoe (ID: 123): 1 year (365 days)
+```
 
-This command sets the logged in session cookie expiration of a user.
+### `wp biscotti set <user_id> <expiration>`
 
-#### Options
+Sets the logged in session cookie expiration for a user.
 
-`<user_id>` — ID of the user.
+#### Parameters
 
-`<expiration>` — New expiration duration. It must be one of the following values:
-* `'3 months'`
-* `'6 months'`
-* `'1 year'`
+- `<user_id>` — The ID of the user.
+- `<expiration>` — The expiration duration. Must be one of:
+  - `default` — WordPress default (14 days)
+  - `3 months` — 90 days
+  - `6 months` — 180 days
+  - `1 year` — 365 days
 
 #### Examples
 
-To set a logged in session cookie expiration of the user with ID 123 to '1 year', you would use:
+Set a user's cookie expiration to 1 year:
 
 ```bash
 wp biscotti set 123 '1 year'
 ```
 
-### Note
+Reset a user to the default expiration:
 
-Please remember to replace the `user_id` and `expiration` placeholders with the actual user ID and desired expiration duration when running either of these commands.
+```bash
+wp biscotti set 123 default
+```
 
 ## Changelog
+
+### 3.0.0
+
+**Major Security & Feature Update**
+
+Security Improvements:
+- **CRITICAL:** Added CSRF protection with nonce verification on profile form submissions
+- Added input validation with whitelist checking for all user inputs
+- Added user existence validation in WP-CLI commands
+- Changed all loose comparisons (`==`) to strict comparisons (`===`)
+
+New Features:
+- Added "Default (14 days)" option to allow users to revert to WordPress standard expiration
+- Added full internationalization (i18n) support with text domain and translation functions
+- Enhanced form descriptions with clearer explanations of each expiration option
+- Improved WP-CLI commands with better output formatting and validation
+- Added PHP 8.0+ type hints (parameter and return types) throughout
+
+Code Quality:
+- Added plugin constants for all magic strings and values
+- Improved PHPDoc blocks with complete parameter and return documentation
+- Switched from if/elseif chains to switch statements for better readability
+- Enhanced error messages in WP-CLI commands
+- Added `uninstall.php` to properly clean up user meta on plugin deletion
+- Updated form markup with ARIA roles for better accessibility
 
 ### 2.1.0
 
